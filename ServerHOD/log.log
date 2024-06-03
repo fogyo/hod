@@ -1,0 +1,10 @@
+июн. 03, 2024 11:27:46 PM server.Logger log
+INFO: Database connected HOD
+июн. 03, 2024 11:27:46 PM server.Logger log
+INFO: Server started. PORT: 5452
+июн. 03, 2024 11:27:49 PM server.Logger log
+INFO: Connected users: 1
+июн. 03, 2024 11:33:32 PM server.Logger log
+INFO: User disconnected: java.net.SocketException: Connection reset
+июн. 03, 2024 11:33:38 PM server.Logger log
+INFO: Connected users: 1
