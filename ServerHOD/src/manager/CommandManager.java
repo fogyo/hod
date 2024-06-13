@@ -101,6 +101,8 @@ public class CommandManager {
 		put("show_receipts", ShowAllReceipts.class);
 		put("show_ingredients", ShowIngrs.class);
 		put("show_receipt", ShowReceipt.class);
+		put("show_permitted_receipts", ShowPermittedRecs.class);
+		put("show_permitted_ingredients", ShowPermittedIngrs.class);
 	}};
 	
 	public String getCMS() {

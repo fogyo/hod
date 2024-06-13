@@ -18,7 +18,7 @@ public class ForbidIngrs extends Command{
 			int IID = Integer.parseInt(uf.getReq());
 			
 			Server.db.delete_permitted_ingridient(Server.connect, IID, uf.getUID());
-			str = "Added successfully";
+			str = "Removed successfully";
 		
 		}catch(Exception e) {
 			str = "There is no ingredient with this id";

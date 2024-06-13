@@ -1,24 +1,23 @@
 package manager;
 
-import java.util.ArrayList;
-
 import database.UserInfo;
 import server.Server;
 
-public class ShowReceipt extends Command{
+public class ShowPermittedRecs extends Command{
 	
 	private UserInfo uf;
 	private String str = "";
 	
-	public ShowReceipt(UserInfo uf) {
+	public ShowPermittedRecs(UserInfo uf) {
 		this.uf = uf;
 	}
 	@Override 
 	public void run() {
-		str = str +  Server.db.get_receipt(Server.connect, Integer.parseInt(uf.getReq()));
+		str = str +  Server.db.get_permitted_receipts(Server.connect, uf.getUID());
 	}
 	
 	public String getString() {
 		return str;
 	}
+
 }

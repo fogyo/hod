@@ -27,6 +27,8 @@ public class Validator {
 		put("show_receipts", 0);
 		put("show_ingredients", 0);
 		put("show_receipt", 1);
+		put("show_permitted_receipts", 1);
+		put("show_permitted_ingredients", 1);
 	}};
 }
 

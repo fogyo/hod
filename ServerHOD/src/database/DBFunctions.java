@@ -16,47 +16,45 @@ public class DBFunctions {
 		Statement statement_saved_receipts;
 		Statement statement_permitted_ingredients;
 		try {
-			String sql_user = "CREATE TABLE IF NOT EXISTS public.\"User\"\r\n"
+			String sql_user = "CREATE TABLE IF NOT EXISTS public.\"user\"\r\n"
 					+ "(\r\n"
-					+ "    \"UID\" bigint NOT NULL,\r\n"
+					+ "    user_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),\r\n"
 					+ "    username text COLLATE pg_catalog.\"default\" NOT NULL,\r\n"
 					+ "    password text COLLATE pg_catalog.\"default\" NOT NULL,\r\n"
-					+ "    CONSTRAINT user_pkey PRIMARY KEY (\"UID\")\r\n"
+					+ "    CONSTRAINT user_pkey PRIMARY KEY (user_id)\r\n"
 					+ ")\r\n"
 					+ "\r\n"
 					+ "TABLESPACE pg_default;\r\n"
 					+ "\r\n"
-					+ "ALTER TABLE IF EXISTS public.\"User\"\r\n"
+					+ "ALTER TABLE IF EXISTS public.\"user\"\r\n"
 					+ "    OWNER to postgres;";
 			statement_user = conn.createStatement();
 			statement_user.executeUpdate(sql_user);
 			
-			String sql_receipts = "CREATE TABLE IF NOT EXISTS public.\"Receipts\"\r\n"
+			String sql_receipts = "CREATE TABLE IF NOT EXISTS public.receipts\r\n"
 					+ "(\r\n"
-					+ "    \"RID\" bigint NOT NULL,\r\n"
+					+ "    receipt_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),\r\n"
 					+ "    receipt_name text COLLATE pg_catalog.\"default\" NOT NULL,\r\n"
 					+ "    \"time\" bigint NOT NULL,\r\n"
-					+ "    steps text COLLATE pg_catalog.\"default\" NOT NULL,\r\n"
 					+ "    ingredients text COLLATE pg_catalog.\"default\" NOT NULL,\r\n"
-					+ "    category text COLLATE pg_catalog.\"default\" NOT NULL,\r\n"
-					+ "    CONSTRAINT receipts_pkey PRIMARY KEY (\"RID\")\r\n"
+					+ "    CONSTRAINT receipts_pkey PRIMARY KEY (receipt_id)\r\n"
 					+ ")\r\n"
 					+ "\r\n"
 					+ "TABLESPACE pg_default;\r\n"
 					+ "\r\n"
-					+ "ALTER TABLE IF EXISTS public.\"Receipts\"\r\n"
+					+ "ALTER TABLE IF EXISTS public.receipts\r\n"
 					+ "    OWNER to postgres;";
 			statement_receipts = conn.createStatement();
 			statement_receipts.executeUpdate(sql_receipts);
 			
-			String sql_ingredients = "CREATE TABLE IF NOT EXISTS public.\"Ingredients\"\r\n"
+			String sql_ingredients = "CREATE TABLE IF NOT EXISTS public.ingredients\r\n"
 					+ "(\r\n"
-					+ "    \"IID\" bigint NOT NULL,\r\n"
-					+ "    \"RID\" bigint NOT NULL,\r\n"
+					+ "    ingredient_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),\r\n"
+					+ "    receipt_id bigint NOT NULL,\r\n"
 					+ "    ingredient text COLLATE pg_catalog.\"default\" NOT NULL,\r\n"
-					+ "    CONSTRAINT ingredients_pkey PRIMARY KEY (\"IID\"),\r\n"
-					+ "    CONSTRAINT receipt_id FOREIGN KEY (\"RID\")\r\n"
-					+ "        REFERENCES public.\"Receipts\" (\"RID\") MATCH SIMPLE\r\n"
+					+ "    CONSTRAINT ingredients_pkey PRIMARY KEY (ingredient_id),\r\n"
+					+ "    CONSTRAINT receipt_id FOREIGN KEY (receipt_id)\r\n"
+					+ "        REFERENCES public.receipts (receipt_id) MATCH SIMPLE\r\n"
 					+ "        ON UPDATE NO ACTION\r\n"
 					+ "        ON DELETE CASCADE\r\n"
 					+ "        NOT VALID\r\n"
@@ -64,51 +62,51 @@ public class DBFunctions {
 					+ "\r\n"
 					+ "TABLESPACE pg_default;\r\n"
 					+ "\r\n"
-					+ "ALTER TABLE IF EXISTS public.\"Ingredients\"\r\n"
+					+ "ALTER TABLE IF EXISTS public.ingredients\r\n"
 					+ "    OWNER to postgres;";
 			statement_ingredients = conn.createStatement();
 			statement_ingredients.executeUpdate(sql_ingredients);
 			
-			String sql_saved_receipts = "CREATE TABLE IF NOT EXISTS public.\"SavedReceipts\"\r\n"
+			String sql_saved_receipts = "CREATE TABLE IF NOT EXISTS public.saved_receipts\r\n"
 					+ "(\r\n"
-					+ "    \"UID\" bigint NOT NULL,\r\n"
-					+ "    \"RID\" bigint NOT NULL,\r\n"
-					+ "    CONSTRAINT receipt_id FOREIGN KEY (\"RID\")\r\n"
-					+ "        REFERENCES public.\"Receipts\" (\"RID\") MATCH SIMPLE\r\n"
+					+ "    user_id bigint NOT NULL,\r\n"
+					+ "    receipt_id bigint NOT NULL,\r\n"
+					+ "    CONSTRAINT receipt_id FOREIGN KEY (receipt_id)\r\n"
+					+ "        REFERENCES public.receipts (receipt_id) MATCH SIMPLE\r\n"
 					+ "        ON UPDATE NO ACTION\r\n"
 					+ "        ON DELETE CASCADE\r\n"
 					+ "        NOT VALID,\r\n"
-					+ "    CONSTRAINT user_id FOREIGN KEY (\"UID\")\r\n"
-					+ "        REFERENCES public.\"User\" (\"UID\") MATCH SIMPLE\r\n"
+					+ "    CONSTRAINT user_id FOREIGN KEY (user_id)\r\n"
+					+ "        REFERENCES public.\"user\" (user_id) MATCH SIMPLE\r\n"
 					+ "        ON UPDATE NO ACTION\r\n"
 					+ "        ON DELETE CASCADE\r\n"
 					+ ")\r\n"
 					+ "\r\n"
 					+ "TABLESPACE pg_default;\r\n"
 					+ "\r\n"
-					+ "ALTER TABLE IF EXISTS public.\"SavedReceipts\"\r\n"
+					+ "ALTER TABLE IF EXISTS public.saved_receipts\r\n"
 					+ "    OWNER to postgres;";
 			statement_saved_receipts = conn.createStatement();
 			statement_saved_receipts.executeUpdate(sql_saved_receipts);
 			
-			String sql_permitted_ingredients = "CREATE TABLE IF NOT EXISTS public.\"PermittedIngredients\"\r\n"
+			String sql_permitted_ingredients = "CREATE TABLE IF NOT EXISTS public.permitted_ingredients\r\n"
 					+ "(\r\n"
-					+ "    \"UID\" bigint NOT NULL,\r\n"
-					+ "    \"IID\" bigint NOT NULL,\r\n"
-					+ "    CONSTRAINT ingredient_id FOREIGN KEY (\"IID\")\r\n"
-					+ "        REFERENCES public.\"Ingredients\" (\"IID\") MATCH SIMPLE\r\n"
+					+ "    user_id bigint NOT NULL,\r\n"
+					+ "    ingredient_id bigint NOT NULL,\r\n"
+					+ "    CONSTRAINT ingredient_id FOREIGN KEY (ingredient_id)\r\n"
+					+ "        REFERENCES public.ingredients (ingredient_id) MATCH SIMPLE\r\n"
 					+ "        ON UPDATE NO ACTION\r\n"
 					+ "        ON DELETE CASCADE\r\n"
 					+ "        NOT VALID,\r\n"
-					+ "    CONSTRAINT user_id FOREIGN KEY (\"UID\")\r\n"
-					+ "        REFERENCES public.\"User\" (\"UID\") MATCH SIMPLE\r\n"
+					+ "    CONSTRAINT user_id FOREIGN KEY (user_id)\r\n"
+					+ "        REFERENCES public.\"user\" (user_id) MATCH SIMPLE\r\n"
 					+ "        ON UPDATE NO ACTION\r\n"
 					+ "        ON DELETE CASCADE\r\n"
 					+ ")\r\n"
 					+ "\r\n"
 					+ "TABLESPACE pg_default;\r\n"
 					+ "\r\n"
-					+ "ALTER TABLE IF EXISTS public.\"PermittedIngredients\"\r\n"
+					+ "ALTER TABLE IF EXISTS public.permitted_ingredients\r\n"
 					+ "    OWNER to postgres;";
 			statement_permitted_ingredients = conn.createStatement();
 			statement_permitted_ingredients.executeUpdate(sql_permitted_ingredients);
@@ -156,10 +154,10 @@ public class DBFunctions {
 		return null;
 	}
 
-	public void delete_receipt_from_saved(Connection conn, int id, int uid) {
+	public void delete_receipt_from_saved(Connection conn, int rid, int uid) {
 		Statement statement;
 		try {
-			String sql = String.format("DELETE FROM public.saved_receipts WHERE RID='%s' AND UID=%s", id, uid);
+			String sql = String.format("DELETE FROM public.saved_receipts WHERE receipt_id='%s' AND user_id=%s", rid, uid);
 			statement = conn.createStatement();
 			statement.executeUpdate(sql);
 		} catch (Exception e) {
@@ -171,7 +169,7 @@ public class DBFunctions {
 		Statement statement;
 		ResultSet rs = null;
 		try {
-			String sql = String.format("SELECT RID FROM public.receipts WHERE receipt_name='%s'", name);
+			String sql = String.format("SELECT receipt_id FROM public.receipts WHERE receipt_name='%s'", name);
 			statement = conn.createStatement();
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
@@ -187,7 +185,7 @@ public class DBFunctions {
 		Statement statement;
 		ResultSet rs = null;
 		try {
-			String sql = String.format("SELECT IID FROM public.ingredients WHERE ingredient='%s'", name);
+			String sql = String.format("SELECT ingredient_id FROM public.ingredients WHERE ingredient='%s'", name);
 			statement = conn.createStatement();
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
@@ -202,7 +200,7 @@ public class DBFunctions {
 	public void add_permitted_ingredient(Connection conn, int IID, int UID) {
 		Statement statement_permitted_ingredient;
 		try {		
-			String sql_into_permitted = String.format("INSERT INTO public.permitted_ingredients (UID, IID) VALUES ('%s', '%s')", UID, IID);
+			String sql_into_permitted = String.format("INSERT INTO public.permitted_ingredients (user_id, ingredient_id) VALUES ('%s', '%s')", UID, IID);
 			statement_permitted_ingredient = conn.createStatement();
 			statement_permitted_ingredient.executeUpdate(sql_into_permitted);
 		}
@@ -214,7 +212,7 @@ public class DBFunctions {
 	public void delete_permitted_ingridient(Connection conn, int IID, int UID) {
 		Statement statement;
 		try {
-			String sql = String.format("DELETE FROM public.permitted_ingredients WHERE IID='%s' AND UID = '%s'", IID, UID);
+			String sql = String.format("DELETE FROM public.permitted_ingredients WHERE ingredient_id='%s' AND user_id = '%s'", IID, UID);
 			statement = conn.createStatement();
 			statement.executeUpdate(sql);
 		} catch (Exception e) {
@@ -225,7 +223,7 @@ public class DBFunctions {
 	public void add_receipt_to_saved(Connection conn, int RID, int UID) {
 		Statement statement;
 		try {		
-			String sql = String.format("INSERT INTO public.saved_receipts (UID, RID) VALUES ('%s', '%s')", UID, RID);
+			String sql = String.format("INSERT INTO public.saved_receipts (user_id, receipt_id) VALUES ('%s', '%s')", UID, RID);
 			statement = conn.createStatement();
 			statement.executeUpdate(sql);
 		}
@@ -256,11 +254,11 @@ public class DBFunctions {
 		Statement statement;
 		ResultSet rs = null;
 		try {
-			String sql = String.format("SELECT RID FROM public.saved_receipts WHERE UID = %s", UID);
+			String sql = String.format("SELECT receipt_id FROM public.saved_receipts WHERE user_id = %s", UID);
 			statement = conn.createStatement();
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
-				receipts.add(rs.getInt(0));
+				receipts.add(rs.getInt(1));
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -273,11 +271,11 @@ public class DBFunctions {
 		Statement statement;
 		ResultSet rs = null;
 		try {
-			String sql = String.format("SELECT * FROM public.receipts WHERE RID = %s", RID);
+			String sql = String.format("SELECT * FROM public.receipts WHERE receipt_id = %s", RID);
 			statement = conn.createStatement();
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
-				str = str + rs.getString(1)+" "+rs.getString(2) + " " + rs.getString(3)+" "+rs.getString(4) + " " + rs.getString(5)+" "+rs.getString(6);
+				str = str + rs.getString(1)+" "+rs.getString(2) + " " + rs.getString(3)+" "+rs.getString(4);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -290,11 +288,11 @@ public class DBFunctions {
 		Statement statement;
 		ResultSet rs = null;
 		try {
-			String sql = String.format("SELECT ingredient, IID FROM public.ingredients");
+			String sql = String.format("SELECT ingredient, ingredient_id FROM public.ingredients");
 			statement = conn.createStatement();
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
-				ingredients.put(rs.getInt(1), rs.getString(0));
+				ingredients.put(rs.getInt(2), rs.getString(1));
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -311,7 +309,40 @@ public class DBFunctions {
 			statement = conn.createStatement();
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
-				str = str + rs.getString(1)+" "+rs.getString(2) + " " + rs.getString(3)+" "+rs.getString(4) + " " + rs.getString(5)+" "+rs.getString(6)+"\n";
+				str = str + rs.getString(1)+" "+rs.getString(2) + " " + rs.getString(3)+" "+rs.getString(4)+"\n";
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return str;
+	}
+	
+	public String get_permitted_receipts(Connection conn, int UID) {
+		String str = "";
+		Statement statement;
+		ResultSet rs = null;
+		try {
+			String sql = String.format("SELECT * FROM public.receipts WHERE receipt_id IN (SELECT receipt_id FROM public.ingredients_with_receipts WHERE ingredient_id IN (SELECT ingredient_id FROM public.permitted_ingredients WHERE user_id = %s))", UID);
+			statement = conn.createStatement();
+			rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				str = str + rs.getString(1)+" "+rs.getString(2) + " " + rs.getString(3)+" "+rs.getString(4)+"\n";
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return str;
+	}
+	public String get_permitted_ingrs(Connection conn, int UID) {
+		String str = "";
+		Statement statement;
+		ResultSet rs = null;
+		try {
+			String sql = String.format("SELECT * FROM public.ingredients WHERE ingredient_id IN (SELECT ingredient_id FROM public.permitted_ingredients WHERE user_id = %s)", UID);
+			statement = conn.createStatement();
+			rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				str = str + rs.getString(1) + " " + rs.getString(2)+"\n";
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
